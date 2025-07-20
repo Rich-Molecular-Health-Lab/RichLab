@@ -12,6 +12,7 @@ Imports:
     htmltools,
     lifecycle,
     magrittr,
+    purrr,
     rlang,
     tibble,
     withr
