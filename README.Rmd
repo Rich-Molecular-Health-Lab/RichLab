@@ -6,9 +6,9 @@ output: github_document
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
+  collapse  = TRUE,
+  comment   = "",
+  fig.path  = "man/figures/README-",
   out.width = "100%"
 )
 ```
@@ -18,39 +18,37 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![CRAN status](https://www.r-pkg.org/badges/version/RichLab)](https://CRAN.R-project.org/package=RichLab)
+[![R-CMD-check](https://github.com/Rich-Molecular-Health-Lab/RichLabNotebook/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Rich-Molecular-Health-Lab/RichLabNotebook/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/Rich-Molecular-Health-Lab/RichLabNotebook/graph/badge.svg)](https://app.codecov.io/gh/Rich-Molecular-Health-Lab/RichLabNotebook)
 <!-- badges: end -->
 
-The goal of RichLab is to ...
+The goal of RichLab is to maintain streamlined documentation in the lab with consistent version control. This package contains templates for lab notebook entries and other documents as well as some of the custom helper functions or scripts that we use frequently in our analyses.
 
-## Installation
+## Installation {.tabset}
 
-You can install the development version of RichLab like so:
+To install `RichLab` on your local R Studio:
+
+### If you don't have `pak` installed...
 
 ``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+install.packages("pak")
+pak::pak("Rich-Molecular-Health-Lab/RichLab")
 ```
 
-## Example
+### If you already have `pak` installed...
 
-This is a basic example which shows you how to solve a common problem:
+``` r
+pak::pak("Rich-Molecular-Health-Lab/RichLab")
+```
 
-```{r example}
+
+## Example Usage
+
+This is a basic example which shows you how start your new lab notebook by opening the cover page template from the R console:
+
+```{r example, eval=FALSE}
 library(RichLab)
-## basic example code
+rmarkdown::draft("notebook_cover.Rmd", template = "Notebook Cover Page", package = "RichLab")
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
-
-```{r cars}
-summary(cars)
-```
-
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this.
-
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
+The easiest way to open up a template, however, is to create a new R Markdown document from inside RStudio (`File` -> `New File` -> `R Markdown`) and select `From Template` when the dialog box appears (*Note: this only works after you install `RichLab`*).

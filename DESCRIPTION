@@ -1,15 +1,19 @@
 Package: RichLab
-Title: What the Package Does (One Line, Title Case)
+Title: Lab Notebooks and Other Templates for the Rich Lab
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+    person("Alicia", "Rich", , "aliciarich@unomaha.edu", role = c("aut", "cre"))
+Description: This package is meant for members of the Rich Lab to have easy access to templates used in our lab notebooks and other tasks. It is also where we store some of our commonly-used helper functions or scripts.
 License: MIT + file LICENSE
 Imports: 
+    bslib,
     cli,
     glue,
+    htmltools,
     lifecycle,
+    magrittr,
     rlang,
+    tibble,
     withr
 Suggests: 
     testthat (>= 3.0.0)

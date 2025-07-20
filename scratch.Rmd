@@ -1,0 +1,14 @@
+---
+title: "scratch"
+output: html_document
+---
+
+```{r}
+use_rmarkdown_template(
+  "Notebook Cover Page",
+  "notebooks",
+  "Use this template to create a cover page for your new lab notebook.",
+  TRUE
+)
+```
+

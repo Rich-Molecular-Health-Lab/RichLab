@@ -1,0 +1,201 @@
+---
+title: "Lab Notebook Cover Page"
+author: "Your Name"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme:
+      bslib: true
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    df_print: paged
+    css: "../../journal.css"
+    code_download: true
+params:
+  headshot:
+    label: "Path to an image file with your headshot:"
+    value: NULL
+    input: file
+  name:
+    label: "Enter your first and last name."
+    value: "Your Name"
+    input: text
+  role:
+    label: "Select one of the following roles in the lab that best applies."
+    value: "Undergraduate assistant"
+    input: select
+    choices: ["Undergraduate assistant", "Undergraduate thesis", "Undergraduate independent study", "Graduate student", "Lab technician", "Lab manager", "Other"]
+  pronouns:
+    label: "Enter your preferred pronouns."
+    value: "She/Her/He/Him/They/Them"
+    input: text
+  callme:
+    label: "Enter the name and/or title you prefer to use."
+    value: "Name or Dr. Name"
+    input: text
+  research_interests:
+    label: "Write 1-3 sentences about what kinds of research questions/topics you are interested in."
+    value: ""
+    input: text
+  research_projects:
+    label: "If you already know which research project(s) you plan to work on, list those here (or leave default text if none)"
+    value: "None yet, new to the lab."
+    input: text
+  personal:
+    label: "Provide one or a few sentences about what you are into or do outside of the lab."
+    value: ""
+    input: text
+  education_complete:
+    label: "Select all that you have completed"
+    value: NULL
+    input: select
+    multiple: TRUE
+    choices: ["BS", "BA", "MS", "MA", "PhD", "DVM", "Other"]
+  institution_doc:
+    label: "Where did you earn your doctorate? (leave blank if none)"
+    value: ""
+    input: text
+  institution_master:
+    label: "Where did you earn a master's degree? (leave blank if none)"
+    value: ""
+    input: text
+  institution_undergrad:
+    label: "Where did you earn a bachelor's degree? (leave blank if none)"
+    value: ""
+    input: text
+  education_inprogress:
+    label: "Select your current degree in progress"
+    value: NULL
+    input: select
+    choices: ["BS", "BA", "MS", "MA", "PhD", "DVM", "Other", "None"]
+  undergrad_major:
+    label: "What was/is your major/minor in undergrad? (leave blank if none)"
+    value: ""
+    input: text
+  grad_program:
+    label: "What was/is your graduate program/department? (leave blank if none)"
+    value: ""
+    input: text
+---
+
+```{r setup, include=FALSE}
+
+library(tidyverse)
+library(bslib)
+library(htmltools)
+
+knitr::knit_engines$set(terminal = function(options) {
+  code <- paste(options$code, collapse = "\n")
+  
+  options$warning <- FALSE
+  knitr::engine_output(options, code, out = code)
+})
+
+knitr::opts_chunk$set(message = FALSE,
+                      warning = FALSE,
+                      echo    = FALSE,
+                      include = TRUE,
+                      eval    = TRUE,
+                      comment = "")
+
+list_education <- function(params = params) {
+  if (params$education_inprogress %in% c("BS", "BA")) {
+    currently <- paste0(params$education_inprogress, " in ", params$undergrad_major, "(in progress) - University of Nebraska Omaha")
+  } else if (params$education_inprogress %in% c("MS", "MA", "PhD")) {
+    currently <- paste0(params$education_inprogress, " in ", params$grad_program, "(in progress) - University of Nebraska Omaha")
+  }  else if (params$education_inprogress == "Other") {
+    currently <- paste0(params$education_inprogress, "(in progress)")
+  }   else if (params$education_inprogress == "None") {
+    currently <- NULL
+  }
+  if (is.null(params$education_complete)) {
+    doc        <- NULL
+    masters    <- NULL
+    bachelors  <- NULL
+  } else if (!is.null(params$education_complete)) {
+    if (has_element(params$education_complete, "PhD")) {
+      doc <- paste(paste0("PhD in ", params$grad_program), params$institution_doc, sep = " - ")
+    } else if (has_element(params$education_complete, "DVM")) {
+      doc <- paste("DVM", params$institution_doc, sep = " - ")
+    } else if (!has_element(params$education_complete, "PhD"|"DVM")) {
+      doc <- NULL
+    }
+    if (has_element(params$education_complete, "MS")) {
+      masters <- paste(paste0("MS in ", params$grad_program), params$institution_master, sep = " - ")
+    } else if (has_element(params$education_complete, "MA")) {
+      masters <- paste(paste0("MA in ", params$grad_program), params$institution_master, sep = " - ")
+    } else if (!has_element(params$education_complete, "MS"|"MA")) {
+      masters <- NULL
+    }
+    if (has_element(params$education_complete, "BS")) {
+      bachelors <- paste(paste0("BS in ", params$undergrad_major), params$institution_undergrad, sep = " - ")
+    } else if (has_element(params$education_complete, "BA")) {
+      bachelors <- paste(paste0("BA in ", params$undergrad_major), params$institution_undergrad, sep = " - ")
+    } else if (!has_element(params$education_complete, "BS"|"BA")) {
+      bachelors <- NULL
+    }
+  }
+  if (is.null(bachelors) & is.null(masters) & is.null(doc)) {
+    education_complete <- NULL
+  } else if (!is.null(bachelors) & is.null(masters) & is.null(doc)) {
+    education_complete <- tags$dl(
+      tags$dd(bachelors)
+    )
+  } else if (!is.null(bachelors) & !is.null(masters) & is.null(doc)) {
+    education_complete <- tags$dl(
+      tags$dd(masters),
+      tags$dd(bachelors)
+    )
+  } else if (!is.null(bachelors) & !is.null(masters) & !is.null(doc)) {
+    education_complete <- tags$dl(
+      tags$dd(doc),
+      tags$dd(masters),
+      tags$dd(bachelors)
+    )
+  } else if (!is.null(bachelors) & is.null(masters) & !is.null(doc)) {
+    education_complete <- tags$dl(
+      tags$dd(doc),
+      tags$dd(bachelors)
+    )
+  }
+
+  education <- tags$dl(
+    tags$dd(currently),
+    tags$dd(education_complete)
+  )
+  return(education)
+}
+card_template <- function(params = params) {
+  card(
+    card_header(tags$h3(paste(params$name, params$role, sep = " "))),
+    card_body(
+      tags$div(layout_columns(col_widths = c(2, 10),
+                              card_image(file = params$headshot, border_radius = "all", width = "100%"),
+                              tags$div(list_education(params = params),
+                                       tags$div(tags$span(
+                                         tags$small(tags$b("Pronouns: "), tags$i(params$pronouns), tags$br(),
+                                                    tags$b("Please Call Me: "), tags$i(params$callme))))))),
+      tags$hr(),
+      tags$dl(tags$dt("Research Interests"), tags$dd(params$research_interests),
+              tags$dt("Current Project(s)"), tags$dd(tags$ul(params$projects)))
+    ),
+    card_footer(tags$dl(tags$dt("Personal Interests"), tags$dd(params$personal)))
+  )
+}
+
+```
+
+## Welcome
+
+This will be the first lab notebook entry that appears in your directory. You can delete this text and replace it with anything or nothing that you wish. Just don't change any of the code in the chunk above or below this time. It will automatically generate a parameterized entry for your new lab notebook after you knit the .Rmd file.
+
+To knit this document and create the entry, click the arrow next to `Knit` at the top of your window pane, and select `Knit with Parameters...`. Fill out the information that appears, and view the html version of this document that it creates.
+
+>***TIP:*** You can return to the `.Rmd` version of this file any time and use the `Knit with Parameters...` step to create a new, updated version.
+
+```{r, results='asis'}
+card_template(params = params)
+```
+
+
